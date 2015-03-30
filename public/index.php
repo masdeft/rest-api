@@ -26,12 +26,25 @@ $app->get('/api/robots', function() use ($app) {
         ];
     }
 
-    return json_encode($data);
+    echo json_encode($data);
 });
 
-// get a robot by the name
-$app->get('/api/robots/search/{name}', function($name) {
+// get robots by the name
+$app->get('/api/robots/search/{name}', function($name) use ($app) {
+    $phql = 'SELECT * FROM robots WHERE name LIKE :name: ORDER BY NAME';
+    $robots = $app->modelsManager->executeQuery($phql, [
+        'name' => '%'.$name.'%'
+    ]);
 
+    $data = [];
+    foreach ($robots as $robot) {
+        $data[] = [
+            'id' => $robot->id,
+            'name' => $robot->name
+        ];
+    }
+
+    echo json_encode($data);
 });
 
 // get a robot by the id
