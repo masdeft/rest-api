@@ -67,4 +67,9 @@ $app->delete('/api/robots/id:[0-9]+', function($id) {
 
 });
 
+$app->notFound(function() use ($app) {
+    $app->response->setStatusCode(404, "Not Found")->sendHeaders();
+    echo 'This is crazy, but this page was not found!';
+});
+
 $app->handle();
