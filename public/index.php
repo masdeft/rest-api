@@ -142,8 +142,25 @@ $app->put('/api/robots/id:[0-9]+', function($id) use ($app) {
 });
 
 // delete a robot by the id
-$app->delete('/api/robots/id:[0-9]+', function($id) {
+$app->delete('/api/robots/id:[0-9]+', function($id) use ($app) {
+    $phql = 'DELETE FROM Robots WHERE id = :id:';
 
+    $status = $app->modelsManager->executeQuery($phql, ['id' => $id]);
+
+    $response = new \Phalcon\Http\Response();
+
+    if ($status->success() == true) {
+        $response->setJsonContent(['status' => 'OK']);
+    } else {
+        $response->setStatusCode(409, "Conflict");
+
+        $errors = [];
+        foreach ($status->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+
+        $response->setJsonContent(['status' => 'ERROR', 'messages' => $errors]);
+    }
 });
 
 $app->notFound(function() use ($app) {
