@@ -78,8 +78,36 @@ $app->get('/api/robots/{id:[0-9]+}', function($id) use ($app) {
 });
 
 // add a new robot
-$app->post('/api/robots', function() {
+$app->post('/api/robots', function() use ($app) {
+    $robot = $app->request->getJsonRawBody();
 
+    $phql = 'INSERT INTO Robots (name, type, year) VALUES (:name:, :type:, :year:)';
+
+    $status = $app->modelsManager->executeQuery($phql, [
+        'name' => $robot->name,
+        'type' => $robot->type,
+        'year' => $robot->year
+    ]);
+
+    $response = new \Phalcon\Http\Response();
+
+    if ($status->saccess() == true) {
+        $response->setStatusCode(201, "Created");
+        $robot->id = $status->getModel()->id;
+
+        $response->setJsonContent(['status' => 'OK', 'data' => $robot]);
+    } else {
+        $response->setStatusCode(409, "Conflict");
+
+        $errors = [];
+        foreach ($status->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+
+        $response->setJsonContent(['status' => 'ERROR', 'messages' => $errors]);
+    }
+
+    return $response;
 });
 
 // update a robot by the id
