@@ -54,8 +54,27 @@ $app->get('/api/robots/search/{name}', function($name) use ($app) {
 });
 
 // get a robot by the id
-$app->get('/api/robots/id:[0-9]+', function($id) {
+$app->get('/api/robots/{id:[0-9]+}', function($id) use ($app) {
+    $phql = 'SELECT * FROM Robots WHERE id = :id:';
+    $robot = $app->modelsManager->executeQuery($phql, [
+        'id' => $id
+    ])->getFirst();
 
+    $response = new \Phalcon\Http\Response();
+
+    if ($robot == false) {
+        $response->setJsonContent(['status' => 'NOT FOUND']);
+    } else {
+        $response->setJsonContent([
+            'status' => 'FOUND',
+            'data' => [
+                'id' => $robot->id,
+                'name' => $robot->name
+            ]
+        ]);
+    }
+
+    return $response;
 });
 
 // add a new robot
