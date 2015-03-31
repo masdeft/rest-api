@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Models;
-
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Message;
 use Phalcon\Mvc\Model\Validator\Inclusionin;
