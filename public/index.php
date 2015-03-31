@@ -1,5 +1,11 @@
 <?php
 
+$loader = new \Phalcon\Loader();
+$loader->registerDirs([
+    '../app/models/'
+]);
+$loader->register();
+
 $di = new \Phalcon\DI\FactoryDefault();
 
 $di->set('db', function() {
