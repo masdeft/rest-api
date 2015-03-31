@@ -120,7 +120,7 @@ $app->put('/api/robots/id:[0-9]+', function($id) use ($app) {
         'name' => $robot->name,
         'type' => $robot->type,
         'year' => $robot->year,
-        'id' => $robot->id
+        'id' => $id
     ]);
 
     $response = new \Phalcon\Http\Response();
