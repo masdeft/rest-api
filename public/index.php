@@ -21,7 +21,7 @@ $app = new \Phalcon\Mvc\Micro($di);
 
 // get list of all robots
 $app->get('/api/robots', function() use ($app) {
-    $phql = 'SELECT * FROM robots ORDER BY name';
+    $phql = 'SELECT * FROM Robots ORDER BY name';
     $robots = $app->modelsManager->executeQuery($phql);
 
     $data = [];
@@ -37,7 +37,7 @@ $app->get('/api/robots', function() use ($app) {
 
 // get robots by the name
 $app->get('/api/robots/search/{name}', function($name) use ($app) {
-    $phql = 'SELECT * FROM robots WHERE name LIKE :name: ORDER BY NAME';
+    $phql = 'SELECT * FROM Robots WHERE name LIKE :name: ORDER BY name';
     $robots = $app->modelsManager->executeQuery($phql, [
         'name' => '%'.$name.'%'
     ]);
