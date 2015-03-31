@@ -111,8 +111,34 @@ $app->post('/api/robots', function() use ($app) {
 });
 
 // update a robot by the id
-$app->put('/api/robots/id:[0-9]+', function($id) {
+$app->put('/api/robots/id:[0-9]+', function($id) use ($app) {
+    $robot = $app->request->getJsonRawBody();
 
+    $phql = 'UPDATE Robots SET name = :name:, type = :type:, year = :year: WHERE id = :id:';
+
+    $status = $app->modelsManager->executeQuery($phql, [
+        'name' => $robot->name,
+        'type' => $robot->type,
+        'year' => $robot->year,
+        'id' => $robot->id
+    ]);
+
+    $response = new \Phalcon\Http\Response();
+
+    if ($status->success() == true) {
+        $response->setJsonContent(['status' => 'OK']);
+    } else {
+        $response->setStatusCode(409, "Conflict");
+
+        $errors = [];
+        foreach ($status->getMessages() as $message) {
+            $errors[] = $message->getMessage();
+        }
+
+        $response->setJsonContent(['status' => 'ERROR', 'messages' => $errors]);
+    }
+
+    return $response;
 });
 
 // delete a robot by the id
